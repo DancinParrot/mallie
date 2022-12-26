@@ -1,0 +1,2 @@
+# Mallie
+Sample linux rootkit.
