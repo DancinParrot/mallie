@@ -1,33 +1,37 @@
+#include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <linux/init.h>
 #include <linux/kallsyms.h>
+#include <linux/syscalls.h>
+#include <linux/namei.h>
 
 // Check kernel compiled options
 // https://www.walkernews.net/2008/11/21/how-to-check-what-kernel-build-options-enabled-in-the-linux-kernel/
 // cat /boot/config-`uname -r` | grep CONFIG_NETFILTER
 
-static unsigned long *sys_call_table;
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Mallie");
+MODULE_DESCRIPTION("A simple Linux module.");
+MODULE_VERSION("0.01");
+
+static unsigned long * __sys_call_table;
 
 /* asmlinkage is important here -- the kernel expects syscall parameters to be
  * on the stack at this point, not inside registers.
  */
-asmlinkage long phony_read(int fd, char __user *buf, size_t count) {
-  printk(KERN_INFO "Intercepted read of fd=%d, %lu bytes\n", fd, count);
- 
-  return orig_read(fd, buf, count);
-}
+typedef asmlinkage long (*orig_mkdir_t)(const struct pt_regs *);
+orig_mkdir_t orig_mkdir;
 
 static int __init mallie_module_init(void)
 {
-	printk(KERN_INFO "Hi!\n");
-	sys_call_table = (void *)kallsyms_lookup_name("sys_call_table");
+	__sys_call_table = kallsyms_lookup_name("sys_call_table");
 
+	printk(KERN_INFO "Mallie loaded.\n");
 	if (sys_call_table == NULL) {
 		printk(KERN_INFO "sys_call_table not found");
 		return -1;
 	}
-	printk(KERN_INFO "sys_call_table found at %p");
+	printk(KERN_INFO "sys_call_table found at 0x%1x", __sys_call_table);
 	return 0;
 }
 
