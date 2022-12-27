@@ -9,6 +9,15 @@
 
 static unsigned long *sys_call_table;
 
+/* asmlinkage is important here -- the kernel expects syscall parameters to be
+ * on the stack at this point, not inside registers.
+ */
+asmlinkage long phony_read(int fd, char __user *buf, size_t count) {
+  printk(KERN_INFO "Intercepted read of fd=%d, %lu bytes\n", fd, count);
+ 
+  return orig_read(fd, buf, count);
+}
+
 static int __init mallie_module_init(void)
 {
 	printk(KERN_INFO "Hi!\n");
