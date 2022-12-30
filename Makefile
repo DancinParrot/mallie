@@ -4,7 +4,7 @@ PWD := $(shell pwd)
 
 CONFIG_MODULE_SIG=n # Disable module verification
 
-obj-m += mallie.o
+obj-m += mallie-lkm.o
 
 # c99 let's compiler know we're using the standard C released in 1999
 # -Wall enables all warnings
@@ -12,10 +12,10 @@ obj-m += mallie.o
 # pendantic-errors will turn all warnings into errors
 
 all:
-	rootkit executable
-rootkit: 
+	mallie-lkm mallie
+mallie-lkm: 
 	make -C $(KERNEL) M=$(PWD) modules
-executable:
-	gcc -o mallie main.c -std=c99 -Wall -pedantic -Wextra
+mallie:
+	gcc -o mallie mallie.c -std=c99 -Wall -pedantic -Wextra
 clean:
 	make -C $(KERNEL) M=$(PWD) clean
