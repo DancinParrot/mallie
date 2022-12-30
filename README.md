@@ -3,8 +3,8 @@ Sample linux rootkit.
 
 # TODO
 - curl a url
-- get syscall table
-- hook a syscall
+- ~~get syscall table~~ use ftrace instead (no need find syscall table)
+- hook a syscall with ftrace instead of modifying kernel memory
 - package everything into a debian package
 - use of mallie executable to curl and mallie.ko lkm to hide mallie executable
 
