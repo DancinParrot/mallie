@@ -1,8 +1,8 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
-#include <linux/kallsyms.h>
 #include <linux/syscalls.h>
+#include <stdlib.h>
 
 // Check kernel compiled options
 // https://www.walkernews.net/2008/11/21/how-to-check-what-kernel-build-options-enabled-in-the-linux-kernel/
@@ -10,62 +10,29 @@
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Mallie");
-MODULE_DESCRIPTION("A simple Linux module.");
+MODULE_DESCRIPTION("Provides functions to supplement logging of kernel activities.");
 MODULE_VERSION("0.01");
 
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0)
-#define KPROBE_LOOKUP 1
-#include <linux/kprobes.h>
-static struct kprobe kp = {
-	.symbol_name = "kallsyms_lookup_name",
-};
-#endif
-
-static unsigned long * __sys_call_table;
-
-/* We pack all the information we need (name, hooking function, original function)
- * into this struct. This makes is easier for setting up the hook and just passing
- * the entire struct off to fh_install_hook() later on.
- * */
-struct ftrace_hook {
-    const char *name;
-    void *function;
-    void *original;
-
-    unsigned long address;
-    struct ftrace_ops ops;
-};
-
-/* Ftrace needs to know the address of the original function that we
- * are going to hook. As before, we just use kallsyms_lookup_name() 
- * to find the address in kernel memory.
- * */
-static int fh_resolve_hook_address(struct ftrace_hook *hook)
+static int test_connection(void)
 {
-	#ifdef KPROBE_LOOKUP
-    	typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
-    	kallsyms_lookup_name_t kallsyms_lookup_name;
-    	register_kprobe(&kp);
-    	kallsyms_lookup_name = (kallsyms_lookup_name_t) kp.addr;
-    	unregister_kprobe(&kp);
-	#endif
-		__sys_call_table = kallsyms_lookup_name("sys_call_table");
-		print("sys_call_table found at 0x%1x", __sys_call_table);
+	char *cmd = "curl -I https://stackoverflow.com/";
 
-    	hook->address = kallsyms_lookup_name(hook->name);
+	char buf[BUFSIZE];
+	FILE *fp;
 
-    	if (!hook->address)
-    	{
-        	printk(KERN_DEBUG "mallie: unresolved symbol: %s\n", hook->name);
-        	return -ENOENT;
-    	}
+	if ((fp = popen(cmd, "r")) == NULL) {
+		printf("Error opening pipe!\n");
+		return -1;
+	}
+	
+	while (fgets(buf, BUFSIZE, fp) != NULL) {
+		printf("OUTPUT: %s", buf);
+	}
 
-	#if USE_FENTRY_OFFSET
-    	*((unsigned long*) hook->original) = hook->address + MCOUNT_INSN_SIZE;
-	#else
-    	*((unsigned long*) hook->original) = hook->address;
-	#endif
+	if (pclose(fp)) {
+        printf("Command not found or exited with error status\n");
+        return -1;
+    }
 
     return 0;
 }
@@ -79,6 +46,8 @@ static int __init mallie_module_init(void)
 
 	register_kprobe(&kp);
 	pr_alert("kprobe registered at 0x%px\n", kp.addr);
+
+	test_connection();
 
 	if (sys_call_table == NULL) {
 		printk(KERN_INFO "sys_call_table not found");
