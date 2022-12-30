@@ -2,6 +2,7 @@
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/syscalls.h>
+#include <linux/kprobes.h>
 
 // Check kernel compiled options
 // https://www.walkernews.net/2008/11/21/how-to-check-what-kernel-build-options-enabled-in-the-linux-kernel/
@@ -27,7 +28,7 @@ static int __init mallie_module_init(void)
 		return -1;
 	}
 
-	printk(KERN_INFO "sys_call_table found at 0x%1x", __sys_call_table);
+	//printk(KERN_INFO "sys_call_table found at 0x%1x", __sys_call_table);
 	return 0;
 }
 
