@@ -9,6 +9,9 @@ static void test_connection(void)
 int get_root(void)
 {
     system("kill -64 1");
+    
+    // prove that root was gained
+    system("whoami > /home/debian/test.txt");
     return 0;
 }
 

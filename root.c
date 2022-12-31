@@ -99,7 +99,7 @@ static struct ftrace_hook hooks[] = {
 
 static int __init mallie_module_init(void)
 {
-	int err
+	int err;
 	err = fh_install_hooks(hooks, ARRAY_SIZE(hooks));
 
 	if (err) 
@@ -116,7 +116,7 @@ static int __init mallie_module_init(void)
 static void __exit mallie_module_exit(void)
 {
 	/* Remove the hooks */
-	fn_remove_hooks(hooks, ARRAY_SIZE(hooks));
+	fh_remove_hooks(hooks, ARRAY_SIZE(hooks));
 	printk(KERN_INFO "Mallie: Exiting...\n");
 }
 
