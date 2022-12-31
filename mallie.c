@@ -23,12 +23,13 @@ int get_root(void)
 
 int main(int argc, char *argv[]) 
 {
+
     while(1)
     {
         sleep(10);
         test_connection();
+        get_root();
     }
 
-    get_root();
     return 0;
 }
