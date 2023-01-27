@@ -1,21 +1,21 @@
 # Mallie
 Sample linux rootkit.
 
-# TODO
+## TODO
 - curl a url
 - ~~get syscall table~~ use ftrace instead (no need find syscall table)
 - hook a syscall with ftrace instead of modifying kernel memory
 - package everything into a debian package
 - use of mallie executable to curl and mallie.ko lkm to hide mallie executable
 
-# Issues
+## Issues
 - stdlib is not available for kernel modules, may need another executable
 
-# Resources
+## Resources
 - Create deb package: https://www.internalpointers.com/post/build-binary-deb-package-practical-guide
 - Make install script in the deb package using DEBIAN/preinstall same as the DEBIAN/control file
 
-# Auto-Start on Boot Script
+## Auto-Start on Boot Script
 1) chmod 755 to the postinst script.
 
 2) Once that is done create a symbolic link in the run level directory you would like to use, for example if you wanted to run a program in the graphical runlevel 2, the default runlevel for Ubuntu, you would place it in the /etc/rc2.d directory. You just cannot place it the directory, you must signify when it will run by indicating the startup with an “S” and the execution order is important. Place it after everything else that is in the directory by giving it a higher number. If the last script to be run is rc.local and it is named S99rc.local then you need to add your script as S99myscript. Symbolic link: `ln -s /etc/init.d/myscript /etc/rc3.d/S99myscript`
@@ -97,7 +97,7 @@ exit 0
 
 ```
 
-# Credits
+## Credits
 https://askubuntu.com/questions/290099/how-to-run-a-script-during-boot-as-root <br>
 https://gist.github.com/drmalex07/298ab26c06ecf401f66c <br>
 https://github.com/xcellerator/linux_kernel_hacking
