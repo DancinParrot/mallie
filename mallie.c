@@ -82,17 +82,12 @@ int get_file_data() {
         return 0;
     }
  
-    // Printing what is written in file
-    // character by character using loop.
-    char ch;
-    do {
-        ch = fgetc(ptr);
-        printf("%c", ch);
-        send_server(&ch);
- 
-        // Checking if character is not EOF.
-        // If it is EOF stop reading.
-    } while (ch != EOF);
+    char msg[100];
+    if (fgets(msg, 100, ptr) != NULL)
+    {
+        //printf("%s", str);
+        send_server(&msg);
+    }
 
     fclose(ptr);
 
