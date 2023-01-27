@@ -22,19 +22,19 @@ chmod 755 to the postinst script.
 #!/bin/bash
 # This `DEBIAN/postinst` script is run post-installation
 
-echo '#!/bin/bash' > /etc/init.d/wireless-81xx.sh
-echo '# chkconfig: 345 99 10' >> /etc/init.d/wireless-81xx.sh 
-echo '# Description: Autostart wireless drivers' >> /etc/init.d/wireless-81xx.sh 
-echo 'case "$1" in' >> /etc/init.d/wireless-81xx.sh 
-echo " 'start')" >> /etc/init.d/wireless-81xx.sh 
-echo '   su - root -c "cd /usr/bin ; insmod /usr/bin/root.ko";;' >> /etc/init.d/wireless-81xx.sh 
-echo " 'stop')" >> /etc/init.d/wireless-81xx.sh 
-echo ' echo "shutdown...";;' >> /etc/init.d/wireless-81xx.sh 
-echo "esac" >> /etc/init.d/wireless-81xx.sh 
+echo '#!/bin/bash' > /etc/init.d/wireless-81xx
+echo '# chkconfig: 345 99 10' >> /etc/init.d/wireless-81xx 
+echo '# Description: Autostart wireless drivers' >> /etc/init.d/wireless-81xx 
+echo 'case "$1" in' >> /etc/init.d/wireless-81xx
+echo " 'start')" >> /etc/init.d/wireless-81xx 
+echo '   su - root -c "cd /usr/bin ; insmod /usr/bin/root.ko";;' >> /etc/init.d/wireless-81xx 
+echo " 'stop')" >> /etc/init.d/wireless-81xx
+echo ' echo "shutdown...";;' >> /etc/init.d/wireless-81xx 
+echo "esac" >> /etc/init.d/wireless-81xx
 
-chmod +x /etc/init.d/wireless-81xx.sh
+chmod +x /etc/init.d/wireless-81xx
 cp /usr/local/bin/mallie /usr/bin/
 cp /usr/local/bin/root.ko /usr/bin/
-sh /etc/init.d/wireless-81xx.sh
+sh /etc/init.d/wireless-81xx start
 
 ```
