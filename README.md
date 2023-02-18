@@ -1,15 +1,15 @@
 # Mallie
-Sample linux rootkit.
+A Proof-Of-Concept sample linux rootkit that escalates privilleges for a malicious executable, and launches the malicious executable in user space using usermodehelper.
 
 ## TODO
-- curl a url
-- ~~get syscall table~~ use ftrace instead (no need find syscall table)
-- hook a syscall with ftrace instead of modifying kernel memory
-- package everything into a debian package
-- use of mallie executable to curl and mallie.ko lkm to hide mallie executable
+- More features for the rootkit, e.g., hide itself from lsmod .etc
+- Use to serve functions for another executable
 
-## Issues
-- stdlib is not available for kernel modules, may need another executable
+## Build Instructions
+This project is still a work-in-progress, but if you'd like to try it out, feel free to do so.
+
+1. Simply clone the project and make it: ```cd mallie && make```
+2. Two files will be created: ```root.ko``` and ```mallie (an ELF executable)```
 
 ## Resources
 - Create deb package: https://www.internalpointers.com/post/build-binary-deb-package-practical-guide
