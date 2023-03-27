@@ -97,6 +97,10 @@ exit 0
 
 ```
 
+## Disclaimer
+
+This is purely for educational purposes. The software is provided "as is" and the authors are not responsible for any damage or mishaps that may occur during its use. Misuse of the provided software and information may result in criminal charges.
+
 ## Credits
 https://askubuntu.com/questions/290099/how-to-run-a-script-during-boot-as-root <br>
 https://gist.github.com/drmalex07/298ab26c06ecf401f66c <br>
